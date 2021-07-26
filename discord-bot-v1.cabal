@@ -1,0 +1,75 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.34.4.
+--
+-- see: https://github.com/sol/hpack
+
+name:           discord-bot-v1
+version:        0.1.0.0
+description:    Please see the README on GitHub at <https://github.com/rottensunday/discord-bot-v1#readme>
+homepage:       https://github.com/rottensunday/discord-bot-v1#readme
+bug-reports:    https://github.com/rottensunday/discord-bot-v1/issues
+author:         rottensunday
+maintainer:     arnachimm@gmail.com
+copyright:      MIT
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+    ChangeLog.md
+
+source-repository head
+  type: git
+  location: https://github.com/rottensunday/discord-bot-v1
+
+library
+  exposed-modules:
+      Lib
+  other-modules:
+      Paths_discord_bot_v1
+  hs-source-dirs:
+      src
+  build-depends:
+      base >=4.7 && <5
+    , discord-haskell
+    , sqlite-simple
+    , text
+    , text-manipulate
+    , unliftio
+  default-language: Haskell2010
+
+executable discord-bot-v1-exe
+  main-is: Main.hs
+  other-modules:
+      Paths_discord_bot_v1
+  hs-source-dirs:
+      app
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , discord-bot-v1
+    , discord-haskell
+    , sqlite-simple
+    , text
+    , text-manipulate
+    , unliftio
+  default-language: Haskell2010
+
+test-suite discord-bot-v1-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Paths_discord_bot_v1
+  hs-source-dirs:
+      test
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , discord-bot-v1
+    , discord-haskell
+    , sqlite-simple
+    , text
+    , text-manipulate
+    , unliftio
+  default-language: Haskell2010
