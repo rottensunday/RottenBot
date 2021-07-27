@@ -51,3 +51,4 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - discord-bot-v1
+    - HUnit

@@ -65,7 +65,8 @@ test-suite discord-bot-v1-test
       test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      base >=4.7 && <5
+      HUnit
+    , base >=4.7 && <5
     , discord-bot-v1
     , discord-haskell
     , sqlite-simple
