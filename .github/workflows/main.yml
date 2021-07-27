@@ -38,7 +38,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.stack
-          key: ${{ runner.os }}-${{ hashFiles('stack.yaml')-1 }}
+          key: ${{ runner.os }}-${{ hashFiles('stack.yaml') }}-1
           restore-keys: |
             ${{ runner.os }}-
 
