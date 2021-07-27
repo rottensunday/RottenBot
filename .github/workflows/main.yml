@@ -33,9 +33,10 @@ jobs:
         run: |
           echo Add other actions to build,
           echo test, and deploy your project.
-          
+            
+      - name: Build app
+        run: stack build
+
       - name: Test app
         run: stack test
         
-      - name: Build app
-        run: stack build
