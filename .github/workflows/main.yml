@@ -34,11 +34,11 @@ jobs:
           echo Add other actions to build,
           echo test, and deploy your project.
 
-      - name: Cache dependencies
+      - name: Cache dependencies2
         uses: actions/cache@v2
         with:
-          path: ~/.stack-work
-          key: ${{ runner.os }}-${{ hashFiles('stack.yaml') }}
+          path: ~/.stack
+          key: ${{ runner.os }}-${{ hashFiles('stack.yaml')-1 }}
           restore-keys: |
             ${{ runner.os }}-
 
