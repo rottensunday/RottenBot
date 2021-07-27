@@ -33,7 +33,15 @@ jobs:
         run: |
           echo Add other actions to build,
           echo test, and deploy your project.
-            
+
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.stack-work
+          key: ${{ runner.os }}-${{ hashFiles('stack.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-
+
       - name: Build app
         run: stack build
 
