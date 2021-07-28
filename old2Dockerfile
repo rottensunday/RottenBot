@@ -3,5 +3,5 @@ WORKDIR /app
 COPY stack.yaml package.yaml /app/
 RUN stack build --only-dependencies
 COPY . /app
-RUN stack --system-ghc build
+RUN stack --system-ghc --copy-bins build
 CMD [ "stack", "exec", "discord-bot-v1-exe" ]
