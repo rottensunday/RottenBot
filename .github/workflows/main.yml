@@ -49,7 +49,7 @@ jobs:
         run: stack test
 
       - name: Copy app to current directory
-        run: cp ~/.local/bin .
+        run: cp ~/.local/bin/discord-bot-v1-exe .
 
       - name: 'Login via Azure CLI'
         uses: azure/login@v1
