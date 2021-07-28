@@ -48,6 +48,9 @@ jobs:
       - name: Test app
         run: stack test
 
+      - name: Copy app to current directory
+        run: cp ~/.local/bin .
+
       - name: 'Login via Azure CLI'
         uses: azure/login@v1
         with:
