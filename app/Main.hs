@@ -39,6 +39,7 @@ instance ToRow DBRow where
 
 urlPath = "UrlFile.txt"
 databasePath = "bot.db"
+tokenPath = "token"
 
 main :: IO ()
 main = pingPongExample
@@ -140,10 +141,14 @@ saveUrlToFile url handle = hPutStr handle (unpack url)
 
 pingPongExample :: IO ()
 pingPongExample = do
+  token <- loadToken
   userFacingError <- runDiscord $ def
-                      { discordToken = "ODY4ODUzNTQyMDcxNDY4MDYz.YP1s6g.rWL3wjCzdr7w_j_0p6Gao3gdtcY"
+                      { discordToken = pack token
                       , discordOnEvent = eventHandler }
   TIO.putStrLn userFacingError
+
+loadToken :: IO String
+loadToken = readFile tokenPath
 
 test1 :: Int -> Int
 test1 x

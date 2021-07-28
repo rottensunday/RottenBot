@@ -34,6 +34,9 @@ jobs:
           echo Add other actions to build,
           echo test, and deploy your ${{ secrets.REGISTRY_USERNAME }}.
 
+      - name: Save token
+        run: echo ${{ secrets.BOT_TOKEN }} > token
+
       - name: Cache dependencies2
         uses: actions/cache@v2
         with:
