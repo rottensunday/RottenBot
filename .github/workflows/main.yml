@@ -66,9 +66,9 @@ jobs:
         uses: 'azure/aci-deploy@v1'
         with:
           resource-group: discord-bot
-          dns-name-label: rottenbaseregistry.azurecr.io
+          dns-name-label: dupson1234523
           image: rottenbaseregistry.azurecr.io/bot-v1:${{ github.sha }}
           registry-username: ${{ secrets.REGISTRY_USERNAME }}
           registry-password: ${{ secrets.REGISTRY_PASSWORD }}
-          name: discord-bot-v1
+          name: discord-bot-v1.1
           location: 'west europe'
