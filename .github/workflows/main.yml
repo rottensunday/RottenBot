@@ -32,7 +32,7 @@ jobs:
       - name: Run a multi-line script
         run: |
           echo Add other actions to build,
-          echo test, and deploy your project.
+          echo test, and deploy your ${{ secrets.REGISTRY_USERNAME }}.
 
       - name: Cache dependencies2
         uses: actions/cache@v2
