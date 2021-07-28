@@ -1,7 +1,5 @@
-FROM haskell:8.10
+FROM debian:latest
 WORKDIR /app
-COPY stack.yaml package.yaml /app/
-RUN stack build --only-dependencies
-COPY . /app
-RUN stack build
-CMD [ "stack", "exec", "discord-bot-v1-exe" ]
+RUN mv "$(stack path --local-install-root --system-ghc)/bin" /app
+COPY bot.db /app
+CMD ["/app/discord-bot-v1-exe"]
