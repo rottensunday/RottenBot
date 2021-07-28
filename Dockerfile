@@ -1,4 +1,4 @@
-FROM debian:latest
+FROM ubuntu:latest
 WORKDIR /app
 COPY . /app
 RUN /bin/sh -c 'apt-get update && \
