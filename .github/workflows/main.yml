@@ -47,4 +47,28 @@ jobs:
 
       - name: Test app
         run: stack test
+
+      - name: 'Login via Azure CLI'
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
         
+      - uses: azure/docker-login@v1
+          with:
+            login-server: rottenbaseregistry.azurecr.io
+            username: ${{ secrets.REGISTRY_USERNAME }}
+            password: ${{ secrets.REGISTRY_PASSWORD }}
+        - run: |
+            docker build . -t rottenbaseregistry.azurecr.io/bot-v1:${{ github.sha }}
+            docker push rottenbaseregistry.azurecr.io/bot-v1:${{ github.sha }}
+
+      - name: 'Deploy to Azure Container Instances'
+          uses: 'azure/aci-deploy@v1'
+          with:
+            resource-group: discord-bot
+            dns-name-label: rottenbaseregistry.azurecr.io
+            image: rottenbaseregistry.azurecr.io/bot-v1:${{ github.sha }}
+            registry-username: ${{ secrets.REGISTRY_USERNAME }}
+            registry-password: ${{ secrets.REGISTRY_PASSWORD }}
+            name: discord-bot-v1
+            location: 'west europe'
