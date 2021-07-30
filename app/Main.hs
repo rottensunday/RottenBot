@@ -17,6 +17,7 @@ import Control.Monad.IO.Class
 import Data.Text.Manipulate
 
 import System.IO
+import Control.Exception
 
 import Control.Applicative
 import Database.SQLite.Simple
@@ -55,8 +56,13 @@ testDB = do
 placeUrl :: Key -> Url -> IO ()
 placeUrl key url = do
   conn <- open databasePath
-  execute conn "INSERT INTO data (key, url) VALUES(?, ?) ON CONFLICT(key) DO UPDATE SET url=excluded.url;" (DBRow key url)
+  putStrLn "????1"
+  result <- try $ execute conn "INSERT INTO data (key, url) VALUES(?, ?) ON CONFLICT(key) DO UPDATE SET url=excluded.url;" (DBRow key url) :: IO (Either SQLError ())
+  putStrLn "????2"
   close conn
+  case result of
+    Left error -> putStrLn $ "Couldn't insert key! ERROR: " ++ unpack (sqlErrorDetails error)
+    _ -> return ()
 
 queryUrl :: Key -> IO (Maybe Url)
 queryUrl key = do
@@ -98,6 +104,7 @@ handleMessage m
       void $ restCall (R.CreateMessage (messageChannel m) "Pong!")
   | hasAttachment m && isSave m =
     do
+      liftIO $ putStrLn $ "SAVE dispatched with key " ++ getKey (getAttachmentKey m)
       liftIO $ placeUrl (getAttachmentKey m) (getAttachmentUrl m)
       void $ restCall (R.CreateMessage (messageChannel m) "Dodano wpis mordo")
   | isLoad m =
