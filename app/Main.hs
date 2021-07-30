@@ -38,7 +38,7 @@ instance ToRow DBRow where
 
 
 urlPath = "UrlFile.txt"
-databasePath = "bot.db"
+databasePath = "resources/storage.db"
 tokenPath = "token"
 
 main :: IO ()

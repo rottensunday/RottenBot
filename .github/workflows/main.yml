@@ -78,3 +78,7 @@ jobs:
           registry-password: ${{ secrets.REGISTRY_PASSWORD }}
           name: discord-bot-name
           location: 'west europe'
+          azure-file-volume-account-key: wJ65TocBCD/C8j8+8qj0jJoo44I636299GujLuOwUrZntzVVzoZcqpZ4C7YDi9AZas93VIWefFv1I4QdO35C1w==
+          azure-file-volume-account-name: botv1share
+          azure-file-volume-mount-path: /app/resources
+          azure-file-volume-share-name: botshare
