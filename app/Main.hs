@@ -40,7 +40,7 @@ instance ToRow DBRow where
   toRow (DBRow key url) = toRow (key, url)
 
 
-urlPath = "UrlFile.txt"
+logPath = "logs.txt"
 databasePath = "resources/storage.db"
 tokenPath = "token"
 
@@ -63,6 +63,9 @@ placeUrl key url = do
   result <- try $ execute conn "INSERT INTO data (key, url) VALUES(?, ?) ON CONFLICT(key) DO UPDATE SET url=excluded.url;" (DBRow key url) :: IO (Either SQLError ())
   putStrLn "????2"
   close conn
+  case result of
+    Left err -> saveLog $ pack $ "Couldn't insert key! ERROR: " ++ unpack (sqlErrorDetails err)
+    _ -> pure ()
   return result
   -- case result of
   --   -- Left er -> error $ "Couldn't insert key! ERROR: " ++ unpack (sqlErrorDetails er)
@@ -116,7 +119,7 @@ handleMessage m
       handle <- ask
       case result of
         Left err -> do
-          liftIO $ putStrLn (unpack (sqlErrorDetails err)) 
+          liftIO $ putStrLn (unpack (sqlErrorDetails err))
           -- error $ "Couldn't insert key! ERROR: " ++ unpack (sqlErrorDetails err)
           throw $ AssertionFailed $ "Couldn't insert key! ERROR: " ++ unpack (sqlErrorDetails err)
           stopDiscord
@@ -152,11 +155,11 @@ getAttachmentUrl = Url . unpack . attachmentUrl . head . messageAttachments
 getAttachmentKey :: Message -> Key
 getAttachmentKey = Key . unpack . strip . pack . drop 5 . unpack . messageText
 
-saveUrl :: Text -> IO ()
-saveUrl url = withFile urlPath WriteMode (saveUrlToFile url)
+saveLog :: Text -> IO ()
+saveLog log = withFile logPath AppendMode (saveLogToFile log)
 
-saveUrlToFile :: Text -> Handle -> IO ()
-saveUrlToFile url handle = hPutStr handle (unpack url)
+saveLogToFile :: Text -> Handle -> IO ()
+saveLogToFile log handle = hPutStrLn handle (unpack log)
 
 onLog :: Text -> IO ()
 onLog = putStrLn . unpack
