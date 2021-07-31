@@ -6,4 +6,4 @@ RUN /bin/sh -c 'apt-get update && \
     ca-certificates && \     
   rm -rf /var/lib/apt/lists/*'
 # CMD ["/app/discord-bot-v1-exe"]
-CMD /bin/sh
+CMD sh
