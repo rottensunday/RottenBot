@@ -58,7 +58,7 @@ testDB = do
 placeUrl :: Key -> Url -> IO (Either SQLError ())
 placeUrl key url = do
   conn <- open databasePath
-  execute conn "PRAGMA journal_mode=WAL;" ()
+  -- execute conn "PRAGMA journal_mode=WAL;" ()
   putStrLn "????1"
   result <- try $ execute conn "INSERT INTO data (key, url) VALUES(?, ?) ON CONFLICT(key) DO UPDATE SET url=excluded.url;" (DBRow key url) :: IO (Either SQLError ())
   putStrLn "????2"
@@ -75,7 +75,7 @@ placeUrl key url = do
 queryUrl :: Key -> IO (Maybe Url)
 queryUrl key = do
   conn <- open databasePath
-  execute conn "PRAGMA journal_mode=WAL;" ()
+  -- execute conn "PRAGMA journal_mode=WAL;" ()
   result <- query_ conn (Query $ pack $ "SELECT key, url FROM data WHERE key = " ++ "\"" ++ getKey key ++ "\"") :: IO [DBRow]
   close conn
   if null result
@@ -85,7 +85,7 @@ queryUrl key = do
 queryKeys :: IO [Key]
 queryKeys = do
   conn <- open databasePath
-  execute conn "PRAGMA journal_mode=WAL;" ()
+  -- execute conn "PRAGMA journal_mode=WAL;" ()
   result <- query_ conn (Query $ pack $ "SELECT key, url FROM data") :: IO [DBRow]
   return $ map key result
 
