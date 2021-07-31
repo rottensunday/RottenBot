@@ -26,6 +26,7 @@ dependencies:
 - unliftio
 - sqlite-simple
 - text-manipulate
+- transformers
 
 library:
   source-dirs: src

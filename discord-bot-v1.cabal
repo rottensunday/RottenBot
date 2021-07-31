@@ -36,6 +36,7 @@ library
     , sqlite-simple
     , text
     , text-manipulate
+    , transformers
     , unliftio
   default-language: Haskell2010
 
@@ -53,6 +54,7 @@ executable discord-bot-v1-exe
     , sqlite-simple
     , text
     , text-manipulate
+    , transformers
     , unliftio
   default-language: Haskell2010
 
@@ -72,5 +74,6 @@ test-suite discord-bot-v1-test
     , sqlite-simple
     , text
     , text-manipulate
+    , transformers
     , unliftio
   default-language: Haskell2010

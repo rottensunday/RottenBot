@@ -18,6 +18,7 @@ import Data.Text.Manipulate
 
 import System.IO
 import Control.Exception
+import Control.Monad.Trans.Reader
 
 import Control.Applicative
 import Database.SQLite.Simple
@@ -25,6 +26,7 @@ import Database.SQLite.Simple.FromRow
 import Database.SQLite.Simple.ToRow
 import Database.SQLite.Simple.FromField
 import Database.SQLite.Simple.ToField
+import System.Exit (exitWith, die)
 newtype Key = Key { getKey :: String } deriving (FromField, ToField, Show)
 newtype Url = Url { getUrl :: String } deriving (FromField, ToField, Show)
 
@@ -53,20 +55,24 @@ testDB = do
   mapM_ print r
   close conn
 
-placeUrl :: Key -> Url -> IO ()
+placeUrl :: Key -> Url -> IO (Either SQLError ())
 placeUrl key url = do
   conn <- open databasePath
+  execute conn "PRAGMA journal_mode=WAL;" ()
   putStrLn "????1"
   result <- try $ execute conn "INSERT INTO data (key, url) VALUES(?, ?) ON CONFLICT(key) DO UPDATE SET url=excluded.url;" (DBRow key url) :: IO (Either SQLError ())
   putStrLn "????2"
   close conn
-  case result of
-    Left error -> putStrLn $ "Couldn't insert key! ERROR: " ++ unpack (sqlErrorDetails error)
-    _ -> return ()
+  return result
+  -- case result of
+  --   -- Left er -> error $ "Couldn't insert key! ERROR: " ++ unpack (sqlErrorDetails er)
+  --   Left er -> die $ "Couldn't insert key! ERROR: " ++ unpack (sqlErrorDetails er)
+  --   _ -> return ()
 
 queryUrl :: Key -> IO (Maybe Url)
 queryUrl key = do
   conn <- open databasePath
+  execute conn "PRAGMA journal_mode=WAL;" ()
   result <- query_ conn (Query $ pack $ "SELECT key, url FROM data WHERE key = " ++ "\"" ++ getKey key ++ "\"") :: IO [DBRow]
   close conn
   if null result
@@ -76,6 +82,7 @@ queryUrl key = do
 queryKeys :: IO [Key]
 queryKeys = do
   conn <- open databasePath
+  execute conn "PRAGMA journal_mode=WAL;" ()
   result <- query_ conn (Query $ pack $ "SELECT key, url FROM data") :: IO [DBRow]
   return $ map key result
 
@@ -105,8 +112,15 @@ handleMessage m
   | hasAttachment m && isSave m =
     do
       liftIO $ putStrLn $ "SAVE dispatched with key " ++ getKey (getAttachmentKey m)
-      liftIO $ placeUrl (getAttachmentKey m) (getAttachmentUrl m)
-      void $ restCall (R.CreateMessage (messageChannel m) "Dodano wpis mordo")
+      result <- liftIO $ placeUrl (getAttachmentKey m) (getAttachmentUrl m)
+      handle <- ask
+      case result of
+        Left err -> do
+          liftIO $ putStrLn (unpack (sqlErrorDetails err)) 
+          -- error $ "Couldn't insert key! ERROR: " ++ unpack (sqlErrorDetails err)
+          throw $ AssertionFailed $ "Couldn't insert key! ERROR: " ++ unpack (sqlErrorDetails err)
+          stopDiscord
+        _ -> void $ restCall (R.CreateMessage (messageChannel m) "Dodano wpis mordo")
   | isLoad m =
     do
       url <- liftIO $ queryUrl (Key . unpack . strip . pack . drop 5 . unpack $ messageText m)
@@ -144,6 +158,9 @@ saveUrl url = withFile urlPath WriteMode (saveUrlToFile url)
 saveUrlToFile :: Text -> Handle -> IO ()
 saveUrlToFile url handle = hPutStr handle (unpack url)
 
+onLog :: Text -> IO ()
+onLog = putStrLn . unpack
+
 -- getContent ::
 
 pingPongExample :: IO ()
@@ -151,7 +168,8 @@ pingPongExample = do
   token <- loadToken
   userFacingError <- runDiscord $ def
                       { discordToken = pack token
-                      , discordOnEvent = eventHandler }
+                      , discordOnEvent = eventHandler
+                      , discordOnLog = onLog }
   TIO.putStrLn userFacingError
 
 loadToken :: IO String
